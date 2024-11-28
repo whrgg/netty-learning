@@ -3,15 +3,15 @@ package cn.itcast.client;
 import cn.itcast.message.*;
 import cn.itcast.protocol.ProcotolFrameDecoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -32,6 +32,7 @@ public class ChatClient {
         MessageCodecSharable MESSAGE_CODEC = new MessageCodecSharable();
         CountDownLatch WAIT_FOR_LOGIN = new CountDownLatch(1);
         AtomicBoolean LOGIN = new AtomicBoolean(false);
+        AtomicBoolean exit = new AtomicBoolean(false);
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(NioSocketChannel.class);
@@ -42,6 +43,27 @@ public class ChatClient {
                     ch.pipeline().addLast(new ProcotolFrameDecoder());
 //                    ch.pipeline().addLast(LOGGING_HANDLER);
                     ch.pipeline().addLast(MESSAGE_CODEC);
+                    //IdleStateHandler用来判断读写时间是否过长
+                    //超过3秒则 触发IdleState#WRITER_IDLE事件
+                    ch.pipeline().addLast(new IdleStateHandler(0,3,0));
+                    //用来关注IdleStateHandler触发的事件
+                    ch.pipeline().addLast(new ChannelDuplexHandler(){
+                        @Override
+                        public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+                            IdleStateEvent event =(IdleStateEvent) evt;
+                            //判断是否出发了读空闲事件
+                            if (event.state() == IdleState.WRITER_IDLE) {
+                                log.debug("写空闲超过3秒 发送消息维持心跳");
+                                ctx.writeAndFlush(new PingMessage());
+                            }
+                            super.userEventTriggered(ctx, evt);
+
+//                            if(event.state() == IdleState.WRITER_IDLE){
+//                                log.debug("空闲超过3s 发送一个心跳包");
+//                                ctx.writeAndFlush(new PingMessage());
+//                            }
+                        }
+                    });
                     ch.pipeline().addLast("client handler", new ChannelInboundHandlerAdapter() {
                         // 接收响应消息
                         @Override
@@ -123,8 +145,26 @@ public class ChatClient {
                                 }
                             }, "system in").start();
                         }
-                    });
+
+                        // 在链接断开时触发
+                        @Override
+                        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+                            log.debug("连接已经断开，按任意键退出..");
+                            exit.set(true);
+                            ctx.channel().close();
+                        }
+
+                        // 在出现异常时触发
+                        @Override
+                        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                            log.debug("连接已经断开，按任意键退出..{}", cause.getMessage());
+                            exit.set(true);
+                        }
+                    }
+                    );
+
                 }
+
             });
             Channel channel = bootstrap.connect("localhost", 8080).sync().channel();
             channel.closeFuture().sync();

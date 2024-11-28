@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 public class QuitHandler extends ChannelInboundHandlerAdapter {
 
 
+
+    //连接断开时触发的inactive事件
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         SessionFactory.getSession().unbind(ctx.channel());
