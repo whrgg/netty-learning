@@ -9,7 +9,7 @@ import java.util.Map;
 @Data
 public abstract class Message implements Serializable {
     public static Class<?> getMessageClass(int messageType){
-        return messageClass.get(messageType);
+        return MESSAGE_CLASSES.get(messageType);
     }
 
     public int sequenceId;
@@ -33,5 +33,24 @@ public abstract class Message implements Serializable {
     public static final int GroupMembersResponseMessage = 13;
     public static final int PING_MESSAGE = 14;
     public static final int PONG_MESSAGE = 15;
-    private static final Map<Integer,Class<?>> messageClass =new HashMap<>();
+    private static final Map<Integer,Class<?>> MESSAGE_CLASSES =new HashMap<>();
+
+    static {
+        MESSAGE_CLASSES.put(LoginRequestMessage, LoginRequestMessage.class);
+        MESSAGE_CLASSES.put(LoginResponseMessage, LoginResponseMessage.class);
+        MESSAGE_CLASSES.put(ChatRequestMessage, ChatRequestMessage.class);
+        MESSAGE_CLASSES.put(ChatResponseMessage, ChatResponseMessage.class);
+        MESSAGE_CLASSES.put(GroupCreateRequestMessage, GroupCreateRequestMessage.class);
+        MESSAGE_CLASSES.put(GroupCreateResponseMessage, GroupCreateResponseMessage.class);
+        MESSAGE_CLASSES.put(GroupJoinRequestMessage, GroupJoinRequestMessage.class);
+        MESSAGE_CLASSES.put(GroupJoinResponseMessage, GroupJoinResponseMessage.class);
+        MESSAGE_CLASSES.put(GroupquitRequestMessage, GroupQuitRequestMessage.class);
+        MESSAGE_CLASSES.put(GroupQuitResponseMessage, GroupQuitResponseMessage.class);
+        MESSAGE_CLASSES.put(GroupChatRequestMessage, GroupChatRequestMessage.class);
+        MESSAGE_CLASSES.put(GroupChatResponseMessage, GroupChatResponseMessage.class);
+        MESSAGE_CLASSES.put(GroupMembersRequestMessage, GroupMembersRequestMessage.class);
+        MESSAGE_CLASSES.put(GroupMembersResponseMessage, GroupMembersResponseMessage.class);
+//        MESSAGE_CLASSES.put(PING_MESSAGE, RpcRequestMessage.class);
+//        MESSAGE_CLASSES.put(PONG_MESSAGE, RpcResponseMessage.class);
+    }
 }

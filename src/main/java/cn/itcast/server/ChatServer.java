@@ -1,7 +1,6 @@
 package cn.itcast.server;
 
-import cn.itcast.message.MessageCodecSharable;
-import cn.itcast.message.PingMessage;
+import cn.itcast.protocol.MessageCodecSharable;
 import cn.itcast.protocol.ProcotolFrameDecoder;
 import cn.itcast.server.handler.*;
 import io.netty.bootstrap.ServerBootstrap;

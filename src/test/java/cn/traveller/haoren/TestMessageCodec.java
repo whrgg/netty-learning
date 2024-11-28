@@ -1,7 +1,7 @@
 package cn.traveller.haoren;
 
 import cn.itcast.message.LoginRequestMessage;
-import cn.itcast.message.MessageCodec;
+import cn.itcast.protocol.MessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.embedded.EmbeddedChannel;
