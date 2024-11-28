@@ -2,8 +2,7 @@ package cn.itcast.server;
 
 import cn.itcast.message.MessageCodecSharable;
 import cn.itcast.protocol.ProcotolFrameDecoder;
-import cn.itcast.server.handler.ChatRequestMessageHandler;
-import cn.itcast.server.handler.LoginRequestMessageHandler;
+import cn.itcast.server.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -22,6 +21,12 @@ public class ChatServer {
         MessageCodecSharable MESSAGE_CODEC = new MessageCodecSharable();
         LoginRequestMessageHandler LOGIN_HANDLER =new LoginRequestMessageHandler();
         ChatRequestMessageHandler CHAT_HANDLER =new ChatRequestMessageHandler();
+        GroupCreateRequestMessageHandler GROUP_CREATE_HANDLER =new GroupCreateRequestMessageHandler();
+        GroupJoinRequestMessageHandler groupJoinHandler = new GroupJoinRequestMessageHandler();
+        GroupMembersRequestMessageHandler groupMembersHandler = new GroupMembersRequestMessageHandler();
+        GroupQuitRequestMessageHandler groupQuitHandler = new GroupQuitRequestMessageHandler();
+        GroupChatRequestMessageHandler groupChatHandler = new GroupChatRequestMessageHandler();
+        QuitHandler quitHandler = new QuitHandler();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.channel(NioServerSocketChannel.class);
@@ -34,6 +39,12 @@ public class ChatServer {
                     ch.pipeline().addLast(MESSAGE_CODEC);
                     ch.pipeline().addLast(LOGIN_HANDLER);
                     ch.pipeline().addLast(CHAT_HANDLER);
+                    ch.pipeline().addLast(GROUP_CREATE_HANDLER);
+                    ch.pipeline().addLast(groupJoinHandler);
+                    ch.pipeline().addLast(groupMembersHandler);
+                    ch.pipeline().addLast(groupQuitHandler);
+                    ch.pipeline().addLast(groupChatHandler);
+                    ch.pipeline().addLast(quitHandler);
                 }
             });
             Channel channel = serverBootstrap.bind(8080).sync().channel();

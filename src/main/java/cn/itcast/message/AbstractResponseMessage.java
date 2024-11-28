@@ -1,8 +1,10 @@
 package cn.itcast.message;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public abstract class AbstractResponseMessage extends Message{
 
     private boolean success;

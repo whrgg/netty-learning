@@ -3,10 +3,11 @@ package cn.itcast.message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@ToString(callSuper = true)
 public class GroupJoinResponseMessage extends AbstractResponseMessage {
 
     public GroupJoinResponseMessage(boolean success, String reason) {
