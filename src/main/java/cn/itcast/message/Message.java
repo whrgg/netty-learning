@@ -31,8 +31,12 @@ public abstract class Message implements Serializable {
     public static final int GroupChatResponseMessage = 11;
     public static final int GroupMembersRequestMessage = 12;
     public static final int GroupMembersResponseMessage = 13;
-    public static final int PING_MESSAGE = 14;
-    public static final int PONG_MESSAGE = 15;
+    public static final int RPC_MESSAGE_REQUSET = 14;
+    public static final int RPC_MESSAGE_RESPONSE = 15;
+    public static final int PING_MESSAGE = 16;
+    public static final int PONG_MESSAGE = 17;
+
+
     private static final Map<Integer,Class<?>> MESSAGE_CLASSES =new HashMap<>();
 
     static {
@@ -50,7 +54,7 @@ public abstract class Message implements Serializable {
         MESSAGE_CLASSES.put(GroupChatResponseMessage, GroupChatResponseMessage.class);
         MESSAGE_CLASSES.put(GroupMembersRequestMessage, GroupMembersRequestMessage.class);
         MESSAGE_CLASSES.put(GroupMembersResponseMessage, GroupMembersResponseMessage.class);
-//        MESSAGE_CLASSES.put(PING_MESSAGE, RpcRequestMessage.class);
-//        MESSAGE_CLASSES.put(PONG_MESSAGE, RpcResponseMessage.class);
+        MESSAGE_CLASSES.put(RPC_MESSAGE_REQUSET, RpcRequestMessage.class);
+        MESSAGE_CLASSES.put(RPC_MESSAGE_RESPONSE, RpcResponseMessage.class);
     }
 }
