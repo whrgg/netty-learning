@@ -14,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class RpcResponseMessageHandler  extends SimpleChannelInboundHandler<RpcResponseMessage> {
 
-    public static final Map<Integer, Promise<?>> PROMISES =new ConcurrentHashMap<>();
+    public static final Map<Integer, Promise<Object>> PROMISES =new ConcurrentHashMap<>();
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponseMessage msg) throws Exception {
         log.debug("{}",msg);
-        Promise<?> promise =PROMISES.remove(msg.getSequenceId());
+        Promise<Object> promise =PROMISES.remove(msg.getSequenceId());
         if(promise!=null){
             Object returnValue = msg.getReturnValue();
             Exception exceptionValue = msg.getExceptionValue();

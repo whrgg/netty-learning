@@ -57,19 +57,23 @@ public class RpcClientManager {
             );
             getChannel().writeAndFlush(msg);
 
-            DefaultPromise<?> promise = new DefaultPromise<>(getChannel().eventLoop());
+            DefaultPromise<Object> promise = new DefaultPromise<>(getChannel().eventLoop());
 
             RpcResponseMessageHandler.PROMISES.put(sequenceId,promise);
-            promise.await();
-            return null;
+//            return promise.get();
+            if(promise.isSuccess()){
+                return promise.getNow();
+            }else{
+                throw  new RuntimeException(promise.cause());
+            }
         });
         return (T) o;
     }
 
     public static void main(String[] args) {
         HelloService service =getProxyServcie(HelloService.class);
-        service.sayHello("zhangsan");
-        service.sayHello("lisi");
+        System.out.println(service.sayHello("zhangsan"));
+        System.out.println(service.sayHello("lisi"));
     }
 
     private static void initChann()  {
