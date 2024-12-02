@@ -63,8 +63,8 @@ public class RpcClientManager {
 //            return promise.get();
             if(promise.isSuccess()){
                 return promise.getNow();
-            }else{
-                throw  new RuntimeException(promise.cause());
+            }else {
+                throw new RuntimeException(promise.cause());
             }
         });
         return (T) o;
